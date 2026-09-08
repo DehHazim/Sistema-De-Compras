@@ -1,0 +1,61 @@
+### Smoke tests (VS Code REST Client / IntelliJ HTTP)
+@base = http://localhost:3333/api
+
+### Login
+# @name login
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "admin@sic.dev", "password": "admin123" }
+
+### Guardar token
+@token = {{login.response.body.token}}
+
+### Dashboard
+GET {{base}}/dashboard
+Authorization: Bearer {{token}}
+
+### Criar solicitação
+# @name novaSC
+POST {{base}}/requests
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "departmentId": "10000000-0000-0000-0000-000000000001",
+  "costCenterId": "20000000-0000-0000-0000-000000000001",
+  "categoryId": "40000000-0000-0000-0000-000000000002",
+  "title": "Cadeiras ergonômicas",
+  "justification": "Reposição de mobiliário",
+  "priority": "normal",
+  "items": [
+    { "description": "Cadeira ergonômica", "unit": "un", "quantity": 10, "estimatedPrice": 900 }
+  ]
+}
+
+### Submeter para aprovação
+POST {{base}}/requests/{{novaSC.response.body.id}}/submit
+Authorization: Bearer {{token}}
+
+### Inbox de aprovações (logar como gestor@sic.dev p/ faixa 5k-50k)
+GET {{base}}/approvals/inbox
+Authorization: Bearer {{token}}
+
+### Decisão
+POST {{base}}/approvals/{{novaSC.response.body.id}}/decision
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "decision": "aprovado", "comment": "OK" }
+
+### Situação orçamentária
+GET {{base}}/budget?year=2026
+Authorization: Bearer {{token}}
+
+### Relatório CSV
+GET {{base}}/reports/compras-por-fornecedor?format=csv
+Authorization: Bearer {{token}}
+
+### Trilha de auditoria
+GET {{base}}/audit-logs?entity=purchase_requests
+Authorization: Bearer {{token}}
