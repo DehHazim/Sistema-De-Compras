@@ -2,6 +2,6 @@
 
 Vídeos e imagens de demonstração do projeto.
 
-- `demo.mp4` — vídeo de apresentação do sistema (a adicionar)
+- `apresentacao-do-projeto.mp4` — vídeo de apresentação do sistema (~25 MB)
 
 > Arquivos acima de 100 MB precisam de Git LFS.
